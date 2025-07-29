@@ -12,11 +12,10 @@ export default function Home() {
 
 <>
 
-    <main className="min-h-screen p-6 md:p-12 space-y-24 bg-gradient-to-br from-zinc-900 to-black">
+    <main className="min-h-screen  bg-gradient-to-br from-zinc-900 to-black">
   
 
 
-    <Header />
     <HeroSection />
 
 
