@@ -6,10 +6,6 @@ export default function HeroSection() {
 
 
 
-       <br></br>
-
-
-       <small>coming soon</small>
       </section>
     );
   }
