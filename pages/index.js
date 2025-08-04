@@ -7,12 +7,9 @@ export default function Home() {
 <>
 
     <main className="min-h-screen  bg-gradient-to-br from-zinc-900 to-black">
-  
-
-
-    <HeroSection />
-
-
+     
+      <HeroSection />
+      
     </main>
     </>
 
