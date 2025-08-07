@@ -1,26 +1,39 @@
-// NewsletterSignup.js
 import React, { useState } from 'react';
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email.trim() && email.includes('@')) {
-      setSubmitted(true);
-      // Here you'd typically send to your backend or API
-      setTimeout(() => {
-        setSubmitted(false);
+    setError('');
+    if (!email.trim() || !email.includes('@')) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    // SEND TO API (NEW)
+    try {
+      const res = await fetch('/api/submit-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setSubmitted(true);
         setEmail('');
-      }, 3000);
+        setTimeout(() => setSubmitted(false), 3000);
+      } else {
+        const data = await res.json();
+        setError(data.error || 'Submission failed. Try again.');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
     }
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6">
-
-
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 rounded-full bg-black signupform focus:ring-2 focus:ring-blue-400">
         <input
           type="email"
@@ -39,6 +52,9 @@ export default function NewsletterSignup() {
       </form>
       {submitted && (
         <p className="text-green-600 mt-4 text-center">Thank you for subscribing!</p>
+      )}
+      {error && (
+        <p className="text-red-600 mt-4 text-center">{error}</p>
       )}
     </div>
   );
