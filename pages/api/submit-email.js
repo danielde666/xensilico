@@ -15,6 +15,8 @@ const app = initializeApp({
 const db = getFirestore(app);
 
 export default async function handler(req, res) {
+    console.log('METHOD:', req.method);
+
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
   const { email } = req.body;
   if (!email || !/^[\w-.]+@[\w-]+\.[\w-.]+$/.test(email)) {
