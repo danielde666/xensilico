@@ -5,6 +5,7 @@ export default function NewsletterSignup() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [formHidden, setFormHidden] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +29,7 @@ export default function NewsletterSignup() {
         setSubmitted(true);
         setEmail('');
         setIsLoading(false); // Hide loading dot on success
-        // Keep form faded out - don't reset loading state
+        setFormHidden(true); // Permanently hide the form
       } else {
         const data = await res.json();
         setError(data.error || 'Submission failed. Try again.');
@@ -42,7 +43,7 @@ export default function NewsletterSignup() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6">
-      {!isLoading ? (
+      {!isLoading && !formHidden ? (
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 rounded-full bg-black signupform focus:ring-2 focus:ring-blue-400 newsletter-form">
           <input
             type="email"
@@ -59,11 +60,11 @@ export default function NewsletterSignup() {
             join the waitlist
           </button>
         </form>
-      ) : (
+      ) : isLoading ? (
         <div className="flex justify-center items-center">
           <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDuration: '0.6s' }}></div>
         </div>
-      )}
+      ) : null}
       {submitted && (
         <p className="text-green-600 mt-4 text-center">Thank you for subscribing!</p>
       )}
