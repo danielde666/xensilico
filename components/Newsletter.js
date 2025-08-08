@@ -27,6 +27,7 @@ export default function NewsletterSignup() {
       if (res.ok) {
         setSubmitted(true);
         setEmail('');
+        setIsLoading(false); // Hide loading dot on success
         // Keep form faded out - don't reset loading state
       } else {
         const data = await res.json();
