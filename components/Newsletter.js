@@ -27,15 +27,15 @@ export default function NewsletterSignup() {
       if (res.ok) {
         setSubmitted(true);
         setEmail('');
-        setTimeout(() => setSubmitted(false), 3000);
+        // Keep form faded out - don't reset loading state
       } else {
         const data = await res.json();
         setError(data.error || 'Submission failed. Try again.');
+        setIsLoading(false); // Only reset loading on error
       }
     } catch (err) {
       setError('Network error. Please try again.');
-    } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Only reset loading on error
     }
   };
 
