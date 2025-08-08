@@ -34,18 +34,18 @@ export default function NewsletterSignup() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6">
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 rounded-full bg-black signupform focus:ring-2 focus:ring-blue-400">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 rounded-full bg-black signupform ">
         <input
           type="email"
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="signupinput flex-1  px-4 py-2 rounded-full focus:outline-none  transition"
+          className="signupinput flex-1 px-4 py-2 rounded-full focus:outline-none  transition"
           required
         />
         <button
           type="submit"
-          className="bg-black-600 hover:bg-black-700 text-white px-6 py-2 rounded-full transition"
+          className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-full transition-colors duration-200"
         >
           join the waitlist
         </button>
