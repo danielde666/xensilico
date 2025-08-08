@@ -26,12 +26,21 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Check if email already exists
+    const emailQuery = await db.collection('emails').where('email', '==', email.toLowerCase()).get();
+    
+    if (!emailQuery.empty) {
+      return res.status(409).json({ error: 'This email is already subscribed!' });
+    }
+
+    // Add new email
     await db.collection('emails').add({
-      email,
+      email: email.toLowerCase(),
       createdAt: new Date().toISOString(),
     });
     res.status(200).json({ success: true });
   } catch (err) {
+    console.error('Database error:', err);
     res.status(500).json({ error: 'Database error' });
   }
 }

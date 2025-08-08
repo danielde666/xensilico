@@ -32,6 +32,15 @@ color:#fff;
 background-color: transparent;
 }
 
+/* Newsletter form transitions */
+.newsletter-form {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.newsletter-form.fade-out {
+  opacity: 0;
+}
+
 h1, .h1,
 h2, .h2,
 h3, .h3,
