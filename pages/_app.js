@@ -16,22 +16,22 @@ export default function App({ Component, pageProps }) {
   return (
     <>
       <Head>
-        <title>AI WRAP</title>
-        <meta name="description" content="AI WRAP" />
+        <title>XENSILICO</title>
+        <meta name="description" content="XENSILICO" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         {/* Open Graph */}
-        <meta property="og:title" content="AI WRAP" />
-        <meta property="og:description" content="AI WRAP" />
-        <meta property="og:image" content="/xenco-p.png" />
-        <meta property="og:url" content="https://legacy2310-site.vercel.app" />
+        <meta property="og:title" content="XENSILICO" />
+        <meta property="og:description" content="XENSILICO" />
+        <meta property="og:image" content="/favicon.ico" />
+        <meta property="og:url" content="https://xensilico.ai" />
         <meta property="og:type" content="website" />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="AI WRAP" />
-        <meta name="twitter:description" content="AI WRAP" />
-        <meta name="twitter:image" content="/xenco-p.png" />
+        <meta name="twitter:title" content="XENSILICO" />
+        <meta name="twitter:description" content="XENSILICO" />
+        <meta name="twitter:image" content="/favicon.ico" />
 
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" />
