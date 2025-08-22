@@ -322,16 +322,72 @@ export default function NewsletterSignup() {
       
       case 'consent':
         return (
-          <div className="flex items-center space-x-3">
-            <input
-              type="checkbox"
-              checked={formData.newsletterConsent}
-              onChange={handleConsentChange}
-              className="w-4 h-4 text-white border-gray-300 rounded focus:ring-white focus:ring-2"
-            />
-            <span className="text-white">
-              I agree to receive marketing communications from your company.
-            </span>
+          <div className="space-y-6">
+            {/* Review Section */}
+            <div className="bg-transparent space-y-3">
+              <h4 className="text-sm font-medium text-white mb-3">Review your information:</h4>
+              
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Email:</span>
+                  <span className="text-white">{formData.email}</span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Name:</span>
+                  <span className="text-white">{formData.fullName}</span>
+                </div>
+                
+                {formData.company && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Company:</span>
+                    <span className="text-white">{formData.company}</span>
+                  </div>
+                )}
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Job Title:</span>
+                  <span className="text-white">{formData.jobTitle}</span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Hospitals:</span>
+                  <span className="text-white text-right max-w-xs">
+                    {formData.hospitalsServed.length > 0 
+                      ? formData.hospitalsServed.join(', ')
+                      : 'None selected'
+                    }
+                  </span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Pathologies:</span>
+                  <span className="text-white text-right max-w-xs">
+                    {formData.pathologies.length > 0 
+                      ? formData.pathologies.join(', ')
+                      : 'None selected'
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Consent Checkbox */}
+            <div className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                checked={formData.newsletterConsent}
+                onChange={handleConsentChange}
+                className="sr-only"
+              />
+              <span className={`px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer ${
+                formData.newsletterConsent
+                  ? 'bg-transparent text-green-400'
+                  : 'bg-transparent text-gray-300 hover:text-white'
+              }`}>
+                I agree to receive marketing communications from your company.
+              </span>
+            </div>
           </div>
         );
       
