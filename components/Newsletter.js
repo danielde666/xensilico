@@ -44,20 +44,20 @@ export default function NewsletterSignup() {
   return (
     <div className="max-w-md mx-auto mt-10 p-6">
       {!isLoading && !formHidden ? (
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3  signupform bg-transparent newsletter-form">
+        <form onSubmit={handleSubmit} className="signupform bg-transparent newsletter-form">
           <input
             type="email"
-            placeholder="you@example.com"
+            placeholder="your email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="signupinput flex-1 px-4 py-2 rounded-full focus:outline-none transition"
+            className="signupinput  px-4 py-2 rounded-full focus:outline-none transition"
             required
           />
           <button
             type="submit"
-            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-full transition-colors duration-200"
+            className="signupbutton bg-trnasparent text-center text-white px-6 py-2 rounded-full transition-colors duration-200"
           >
-            join the waitlist
+            <img src="/arrow.svg" alt="arrow" className='mx-auto'/>
           </button>
         </form>
       ) : isLoading ? (

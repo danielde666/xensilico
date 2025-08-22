@@ -22,8 +22,6 @@ body {
   width: 100%;
 }
 
-
-
 .signupinput{
 color:#fff;
 background-color: transparent;
@@ -48,6 +46,18 @@ h5, .h5 {
   font-style: normal;
   text-transform: uppercase;
   letter-spacing: -.02rem;
+}
+
+
+
+
+h1{
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotate(-90deg);
+  translate: 0px 60px;
+  color: #9DFF00;
 }
 
 .medium {
@@ -76,6 +86,21 @@ p {
   font-size: 12px;
 }
 
+
+.signupform{
+ display: block;
+
+}
+.signupinput{
+  width: 100%;
+  text-align: center;
+}
+
+.signupbutton{
+  width: 100%;
+}
+  width: 100%;
+
 /* Hide cursor when custom cursor is active */
 body.custom-cursor-active {
   cursor: none !important;
@@ -84,6 +109,8 @@ body.custom-cursor-active {
 body.custom-cursor-active * {
   cursor: none !important;
 }
+
+
 
 
 .splash{
