@@ -4,13 +4,30 @@ import Head from 'next/head'
 import CustomCursor from '../components/CustomCursor'
 import { useEffect, useState } from 'react'
 
+// Easy toggle: set to false to disable custom cursor by default
+const CUSTOM_CURSOR_ENABLED = false;
+
 export default function App({ Component, pageProps }) {
-  const [showCursor, setShowCursor] = useState(false);
+  const [showCursor, setShowCursor] = useState(CUSTOM_CURSOR_ENABLED);
 
   useEffect(() => {
-    // Basic mobile detection
+    // Only enable cursor if explicitly enabled AND not mobile
     const isMobile = /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|BlackBerry/i.test(navigator.userAgent);
-    setShowCursor(!isMobile);
+    setShowCursor(CUSTOM_CURSOR_ENABLED && !isMobile);
+
+    // Add keyboard shortcut to toggle cursor (Ctrl+Shift+C)
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+        e.preventDefault();
+        setShowCursor(prev => !prev);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   return (
