@@ -378,7 +378,7 @@ export default function NewsletterSignup() {
                 type="checkbox"
                 checked={formData.newsletterConsent}
                 onChange={handleConsentChange}
-                className="sr-only"
+                className="checkbox consent-checkbox"
               />
               <span className={`px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer ${
                 formData.newsletterConsent
