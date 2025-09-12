@@ -128,21 +128,20 @@ export default function EditProfileStep({ user, onProfileComplete, onBack }) {
     }
     
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('uid', user.uid);
-      formDataToSend.append('fullName', formData.fullName);
-      formDataToSend.append('company', formData.company);
-      formDataToSend.append('jobTitle', formData.jobTitle);
-      formDataToSend.append('hospitalsServed', JSON.stringify(formData.hospitalsServed));
-      formDataToSend.append('pathologies', JSON.stringify(formData.pathologies));
-      
-      if (formData.profileImage) {
-        formDataToSend.append('profileImage', formData.profileImage);
-      }
-      
-      const res = await fetch('/api/profile/update', {
+      // For now, skip image upload and just update the profile data
+      const res = await fetch('/api/profile/update-simple', {
         method: 'POST',
-        body: formDataToSend,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uid: user.uid,
+          fullName: formData.fullName,
+          company: formData.company,
+          jobTitle: formData.jobTitle,
+          hospitalsServed: JSON.stringify(formData.hospitalsServed),
+          pathologies: JSON.stringify(formData.pathologies)
+        }),
       });
       
       if (res.ok) {
