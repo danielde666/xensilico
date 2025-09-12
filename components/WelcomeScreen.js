@@ -3,12 +3,12 @@ import Image from 'next/image';
 
 export default function WelcomeScreen({ onEnter }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+    <div className="min-h-screen bg-black flex items-center justify-center">
       <div className="text-center">
         {/* Xensilico Logo */}
         <div className="mb-8">
           <Image
-            src="/xenco-p.png"
+            src="/logo.svg"
             alt="Xensilico"
             width={200}
             height={200}
@@ -17,10 +17,6 @@ export default function WelcomeScreen({ onEnter }) {
           />
         </div>
         
-        {/* Welcome Text */}
-        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-          Welcome to Xensilico
-        </h1>
         
         <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
           Join our community of healthcare professionals and researchers

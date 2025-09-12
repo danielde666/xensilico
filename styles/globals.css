@@ -46,6 +46,11 @@ h5, .h5 {
   font-style: normal;
   text-transform: uppercase;
   letter-spacing: -.02rem;
+  -webkit-font-smoothing: antialiased;  
+  text-rendering: optimizeLegibility;
+  font-smooth: always;
+  font-family: 'Founders Grotesk Regular', Arial, Helvetica, sans-serif;
+  font-weight: 100 !important;
 }
 
 
@@ -56,8 +61,10 @@ h1{
   top: 0;
   left: 0;
   transform: rotate(-90deg);
-  translate: 0px 60px;
+  translate: 0px 55px;
   color: #9DFF00;
+  font-weight: 100 !important;
+  font-size: 12px !important;
 }
 
 .medium {

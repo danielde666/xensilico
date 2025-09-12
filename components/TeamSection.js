@@ -27,7 +27,7 @@ export default function TeamSection() {
         {team.map((member, idx) => (
           <div
             key={idx}
-            className="bg-gradient-to-br from-black via-gray-900 to-neutral-800 rounded-2xl border border-neutral-700 p-6 text-center transition hover:scale-[1.02] hover:border-green-200 duration-300"
+            className="bg-black rounded-2xl border border-neutral-700 p-6 text-center transition hover:scale-[1.02] hover:border-green-200 duration-300"
           >
             <img
               src={member.photo}

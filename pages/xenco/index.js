@@ -5,7 +5,7 @@ import styles from '../../styles/xenco.module.css';
 export default function Proposal() {
   return (
     <>
-      <main className={`min-h-screen bg-gradient-to-br from-zinc-900 to-black ${styles.xencoPage}`}>
+      <main className={`min-h-screen bg-black ${styles.xencoPage}`}>
         <Header />
         {/* Splash Section */}
         <section className={styles.splash}>

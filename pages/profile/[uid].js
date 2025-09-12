@@ -46,7 +46,7 @@ export default function UserProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-white text-xl">Loading profile...</div>
       </div>
     );
@@ -54,7 +54,7 @@ export default function UserProfile() {
 
   if (error || !userProfile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-400 text-xl mb-4">Profile Not Found</div>
           <button
@@ -75,7 +75,7 @@ export default function UserProfile() {
         <meta name="description" content={`Profile of ${userProfile.fullName} at Xensilico`} />
       </Head>
       
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <div className="min-h-screen bg-black text-white">
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">
