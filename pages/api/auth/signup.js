@@ -10,6 +10,7 @@ const app = initializeApp({
       ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
       : `-----BEGIN PRIVATE KEY-----\n${process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')}\n-----END PRIVATE KEY-----`,
   }),
+  projectId: process.env.FIREBASE_PROJECT_ID,
 });
 
 const db = getFirestore(app);
@@ -17,6 +18,11 @@ const auth = getAuth(app);
 
 export default async function handler(req, res) {
   console.log('Auth signup endpoint called:', req.method);
+  console.log('Environment check:', {
+    projectId: process.env.FIREBASE_PROJECT_ID ? 'present' : 'missing',
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL ? 'present' : 'missing',
+    privateKey: process.env.FIREBASE_PRIVATE_KEY ? 'present' : 'missing'
+  });
   
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
