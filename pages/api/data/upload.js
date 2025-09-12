@@ -23,12 +23,17 @@ export const config = {
 };
 
 export default async function handler(req, res) {
+  console.log('Data upload endpoint called:', req.method);
+  
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
   }
 
   try {
+    console.log('Parsing form data...');
     const formData = await parseFormData(req);
+    console.log('Form data parsed:', { uid: formData.uid ? 'present' : 'missing', images: formData.images ? Array.isArray(formData.images) ? formData.images.length : 'single' : 'missing' });
+    
     const { uid, images } = formData;
     
     if (!uid) {
@@ -100,6 +105,11 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('Data upload error:', err);
+    console.error('Error details:', {
+      code: err.code,
+      message: err.message,
+      stack: err.stack
+    });
     res.status(500).json({ error: 'Failed to upload data. Please try again.' });
   }
 }

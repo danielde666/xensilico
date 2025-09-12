@@ -66,9 +66,15 @@ export default function DataUploadStep({ user, onDataUploaded, onBack }) {
         formData.append(`images`, file);
       });
       
-      const res = await fetch('/api/data/upload', {
+      const res = await fetch('/api/data/upload-simple', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uid: user.uid,
+          fileCount: uploadedFiles.length
+        }),
       });
       
       if (res.ok) {
