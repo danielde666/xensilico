@@ -66,15 +66,16 @@ export default function DataUploadStep({ user, onDataUploaded, onBack }) {
         formData.append(`images`, file);
       });
       
-      const res = await fetch('/api/data/upload', {
+      const formDataToSend = new FormData();
+      formDataToSend.append('uid', user.uid);
+      
+      uploadedFiles.forEach((file, index) => {
+        formDataToSend.append(`images`, file);
+      });
+      
+      const res = await fetch('/api/data/upload-local', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          uid: user.uid,
-          fileCount: uploadedFiles.length
-        }),
+        body: formDataToSend,
       });
       
       if (res.ok) {
