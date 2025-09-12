@@ -115,9 +115,25 @@ export default function NewsletterSignup() {
               <h2 className="text-3xl font-semibold text-white mb-4">
                 Welcome to Xensilico!
               </h2>
-              <p className="text-gray-300">
+              <p className="text-gray-300 mb-8">
                 Your account has been created successfully. You're now ready to explore our platform.
               </p>
+              
+              <div className="space-y-4">
+                <button
+                  onClick={() => setCurrentStep('display')}
+                  className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-full hover:bg-white hover:text-gray-900 transition-all duration-200 font-semibold mr-4"
+                >
+                  View My Profile
+                </button>
+                
+                <button
+                  onClick={() => window.location.href = '/team'}
+                  className="bg-transparent border-2 border-gray-600 text-gray-300 px-8 py-3 rounded-full hover:border-white hover:text-white transition-all duration-200 font-semibold"
+                >
+                  Go to Main Site
+                </button>
+              </div>
             </div>
           </div>
         );

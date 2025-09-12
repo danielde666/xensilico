@@ -14,8 +14,8 @@ export default function DataUploadStep({ user, onDataUploaded, onBack }) {
         setError(`${file.name} is not a valid image file.`);
         return false;
       }
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit
-        setError(`${file.name} is too large. Maximum size is 10MB.`);
+      if (file.size > 50 * 1024 * 1024) { // 50MB limit
+        setError(`${file.name} is too large. Maximum size is 50MB.`);
         return false;
       }
       return true;
@@ -127,7 +127,7 @@ export default function DataUploadStep({ user, onDataUploaded, onBack }) {
               </button>
             </div>
             <p className="text-gray-400 text-sm">
-              Supports JPG, PNG, GIF up to 10MB each
+              Supports JPG, PNG, GIF up to 50MB each
             </p>
           </div>
           

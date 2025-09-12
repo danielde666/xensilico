@@ -16,6 +16,7 @@ export default function ProfileDisplayStep({ user, uploadedData, onComplete, onE
       const res = await fetch(`/api/profile/get?uid=${user.uid}`);
       if (res.ok) {
         const data = await res.json();
+        console.log('Fetched profile data:', data.profile);
         setUserProfile(data.profile);
       }
     } catch (err) {
