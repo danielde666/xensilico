@@ -10,7 +10,7 @@ const app = initializeApp({
       ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
       : `-----BEGIN PRIVATE KEY-----\n${process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')}\n-----END PRIVATE KEY-----`,
   }),
-  storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`
+  storageBucket: 'xensilico-leads.firebasestorage.app'
 });
 
 const db = getFirestore(app);
