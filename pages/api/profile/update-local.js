@@ -1,20 +1,7 @@
-import { initializeApp, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { db } from '../../../lib/firebase-admin';
 import formidable from 'formidable';
 import fs from 'fs';
 import path from 'path';
-
-const app = initializeApp({
-  credential: cert({
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY.includes('-----BEGIN PRIVATE KEY-----') 
-      ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-      : `-----BEGIN PRIVATE KEY-----\n${process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')}\n-----END PRIVATE KEY-----`,
-  }),
-});
-
-const db = getFirestore(app);
 
 export const config = {
   api: {
@@ -30,27 +17,33 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Parse multipart form data
+    // Parse multipart form data with better error handling
     const form = formidable({
-      uploadDir: './public/uploads/profile-images',
+      uploadDir: './tmp',
       keepExtensions: true,
       maxFileSize: 5 * 1024 * 1024, // 5MB
+      allowEmptyFiles: false,
     });
 
     const [fields, files] = await form.parse(req);
+    console.log('Form parsed successfully');
     
-    const uid = fields.uid[0];
-    const fullName = fields.fullName[0];
-    const company = fields.company[0];
-    const jobTitle = fields.jobTitle[0];
-    const hospitalsServed = JSON.parse(fields.hospitalsServed[0]);
-    const pathologies = JSON.parse(fields.pathologies[0]);
+    // Extract fields with fallbacks
+    const uid = Array.isArray(fields.uid) ? fields.uid[0] : fields.uid;
+    const fullName = Array.isArray(fields.fullName) ? fields.fullName[0] : fields.fullName;
+    const company = Array.isArray(fields.company) ? fields.company[0] : fields.company;
+    const jobTitle = Array.isArray(fields.jobTitle) ? fields.jobTitle[0] : fields.jobTitle;
+    const hospitalsServed = JSON.parse(Array.isArray(fields.hospitalsServed) ? fields.hospitalsServed[0] : fields.hospitalsServed);
+    const pathologies = JSON.parse(Array.isArray(fields.pathologies) ? fields.pathologies[0] : fields.pathologies);
+
+    console.log('Fields extracted:', { uid, fullName, jobTitle });
 
     let profileImageUrl = '';
     
     // Handle profile image upload
     if (files.profileImage && files.profileImage[0]) {
       const file = files.profileImage[0];
+      console.log('Processing image:', file.originalFilename);
       
       // Create user-specific directory
       const userDir = `./public/uploads/profile-images/${uid}`;
@@ -69,6 +62,7 @@ export default async function handler(req, res) {
       
       // Create URL for local serving
       profileImageUrl = `/uploads/profile-images/${uid}/${filename}`;
+      console.log('Image saved:', profileImageUrl);
     }
 
     // Update user profile in Firestore
@@ -83,9 +77,10 @@ export default async function handler(req, res) {
       isProfileComplete: true
     };
 
+    console.log('Updating Firestore...');
     await db.collection('users').doc(uid).update(profileData);
     
-    console.log('Profile updated with local image:', { uid, fullName, profileImageUrl });
+    console.log('Profile updated successfully:', { uid, fullName, profileImageUrl });
     
     res.status(200).json({ 
       success: true,
@@ -96,6 +91,7 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('Local profile update error:', err);
-    res.status(500).json({ error: 'Failed to update profile. Please try again.' });
+    console.error('Error stack:', err.stack);
+    res.status(500).json({ error: `Failed to update profile: ${err.message}` });
   }
 }
