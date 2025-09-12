@@ -16,11 +16,14 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 export default async function handler(req, res) {
+  console.log('Auth signup endpoint called:', req.method);
+  
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
   }
   
   const { email, password } = req.body;
+  console.log('Received data:', { email: email ? 'present' : 'missing', password: password ? 'present' : 'missing' });
   
   // Validate required fields
   if (!email || !/^[\w-.]+@[\w-]+\.[\w-.]+$/.test(email)) {
@@ -32,12 +35,16 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('Attempting to create user in Firebase Auth...');
+    
     // Create user in Firebase Auth
     const userRecord = await auth.createUser({
       email: email.toLowerCase(),
       password: password,
       emailVerified: false,
     });
+    
+    console.log('User created successfully:', userRecord.uid);
 
     // Create user profile in Firestore
     const userProfile = {
@@ -55,7 +62,9 @@ export default async function handler(req, res) {
       hasUploadedData: false
     };
 
+    console.log('Creating user profile in Firestore...');
     await db.collection('users').doc(userRecord.uid).set(userProfile);
+    console.log('User profile created in Firestore');
     
     console.log('New user created:', { uid: userRecord.uid, email });
     
@@ -69,6 +78,11 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('User creation error:', err);
+    console.error('Error details:', {
+      code: err.code,
+      message: err.message,
+      stack: err.stack
+    });
     
     if (err.code === 'auth/email-already-exists') {
       return res.status(409).json({ error: 'An account with this email already exists' });
