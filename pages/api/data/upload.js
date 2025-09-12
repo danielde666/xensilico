@@ -30,6 +30,55 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Check if this is a simple JSON request (not multipart)
+    const contentType = req.headers['content-type'];
+    
+    if (contentType && contentType.includes('application/json')) {
+      // Handle simple JSON request
+      const { uid, fileCount } = req.body;
+      console.log('Simple upload request:', { uid, fileCount });
+      
+      if (!uid) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      // Create mock upload records
+      const mockUploads = [];
+      for (let i = 0; i < (fileCount || 1); i++) {
+        const mockUpload = {
+          id: `mock-${Date.now()}-${i}`,
+          uid,
+          fileName: `test-image-${i + 1}.jpg`,
+          fileUrl: 'https://via.placeholder.com/300x300',
+          fileSize: 1024,
+          contentType: 'image/jpeg',
+          uploadDate: new Date().toISOString(),
+          status: 'pending',
+          metadata: {}
+        };
+        mockUploads.push(mockUpload);
+      }
+
+      // Add to Firestore
+      for (const upload of mockUploads) {
+        await db.collection('uploads').add(upload);
+      }
+
+      // Update user's hasUploadedData status
+      await db.collection('users').doc(uid).update({
+        hasUploadedData: true,
+        updatedAt: new Date().toISOString()
+      });
+      
+      console.log('Mock uploads created for user:', uid, 'count:', mockUploads.length);
+      
+      return res.status(200).json({ 
+        success: true,
+        uploads: mockUploads
+      });
+    }
+
+    // Handle multipart form data (original logic)
     console.log('Parsing form data...');
     const formData = await parseFormData(req);
     console.log('Form data parsed:', { uid: formData.uid ? 'present' : 'missing', images: formData.images ? Array.isArray(formData.images) ? formData.images.length : 'single' : 'missing' });
