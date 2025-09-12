@@ -1,26 +1,40 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 
 export default function TeamPage() {
   const [team, setTeam] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    // Fetch both team members and community users
-    Promise.all([
-      fetch('/api/team').then(res => res.json()),
-      fetch('/api/team/users').then(res => res.json())
-    ])
-    .then(([teamData, usersData]) => {
-      setTeam(teamData);
-      setUsers(usersData.users || []);
-      setLoading(false);
-    })
-    .catch(err => {
-      console.error('Error fetching data:', err);
-      setLoading(false);
-    });
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        console.log('Fetching team data...');
+        
+        // Fetch team data
+        const teamResponse = await fetch('/api/team');
+        const teamData = await teamResponse.json();
+        console.log('Team data:', teamData);
+        setTeam(teamData);
+        
+        // Fetch users data
+        console.log('Fetching users data...');
+        const usersResponse = await fetch('/api/team/users');
+        const usersData = await usersResponse.json();
+        console.log('Users data:', usersData);
+        setUsers(usersData.users || []);
+        
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
   }, []);
 
   if (loading) {
@@ -57,12 +71,20 @@ export default function TeamPage() {
       </div>
 
       {/* Community Members */}
-      {users.length > 0 && (
+      <div className="mb-4 text-center">
+        <p className="text-gray-400">Found {users.length} community members</p>
+      </div>
+      
+      {users.length > 0 ? (
         <div>
           <h2 className="text-2xl font-semibold mb-8 text-center">Community Members</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {users.map((user) => (
-              <div key={user.id} className="bg-zinc-800 p-4 rounded-lg text-center shadow-lg">
+              <div 
+                key={user.id} 
+                className="bg-zinc-800 p-4 rounded-lg text-center shadow-lg cursor-pointer hover:bg-zinc-700 transition-colors duration-200"
+                onClick={() => router.push(`/profile/${user.id}`)}
+              >
                 {user.profileImageUrl ? (
                   <Image
                     src={user.profileImageUrl}
@@ -93,9 +115,18 @@ export default function TeamPage() {
                     <span className="text-gray-400 text-xs">+{user.hospitalsServed.length - 2} more</span>
                   )}
                 </div>
+                <div className="mt-3 pt-2 border-t border-gray-600">
+                  <span className="text-xs text-gray-400">Click to view profile</span>
+                </div>
               </div>
             ))}
           </div>
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <div className="text-4xl text-gray-500 mb-4">👥</div>
+          <p className="text-gray-400 mb-4">No community members yet</p>
+          <p className="text-gray-500 text-sm">Be the first to join our community!</p>
         </div>
       )}
     </div>

@@ -134,33 +134,52 @@ export default function ProfileDisplayStep({ user, uploadedData, onComplete, onE
           </div>
 
           {allUploads.length > 0 ? (
-            <div className="space-y-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {allUploads.slice(0, 6).map((upload, index) => (
-                <div key={upload.id || index} className="flex items-center space-x-4 p-3 bg-gray-700/50 rounded-lg">
-                  <div className="w-12 h-12 bg-gray-600 rounded-lg flex items-center justify-center">
-                    <span className="text-gray-300">📄</span>
+                <div key={upload.id || index} className="relative group">
+                  <div className="aspect-square bg-gray-700 rounded-lg overflow-hidden">
+                    {upload.fileUrl ? (
+                      <Image
+                        src={upload.fileUrl}
+                        alt={upload.fileName}
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-gray-300 text-2xl">📄</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm font-medium truncate">
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-2 rounded-b-lg">
+                    <p className="text-white text-xs font-medium truncate">
                       {upload.fileName}
                     </p>
-                    <p className="text-gray-400 text-xs">
-                      {upload.status === 'pending' ? 'Pending Processing' : upload.status}
-                    </p>
-                  </div>
-                  <div className={`px-2 py-1 rounded-full text-xs ${
-                    upload.status === 'pending' 
-                      ? 'bg-yellow-600 text-yellow-100' 
-                      : 'bg-green-600 text-green-100'
-                  }`}>
-                    {upload.status === 'pending' ? 'Pending' : 'Processed'}
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-gray-300 text-xs">
+                        {(upload.fileSize / 1024 / 1024).toFixed(1)} MB
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs ${
+                        upload.status === 'pending' 
+                          ? 'bg-yellow-600 text-yellow-100' 
+                          : 'bg-green-600 text-green-100'
+                      }`}>
+                        {upload.status === 'pending' ? 'Pending' : 'Processed'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
               {allUploads.length > 6 && (
-                <p className="text-gray-400 text-sm text-center">
-                  +{allUploads.length - 6} more files
-                </p>
+                <div className="aspect-square bg-gray-600/30 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-500">
+                  <div className="text-center">
+                    <span className="text-gray-400 text-2xl">📁</span>
+                    <p className="text-gray-400 text-sm mt-2">
+                      +{allUploads.length - 6} more
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           ) : (
