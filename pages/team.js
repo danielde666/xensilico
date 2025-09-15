@@ -91,6 +91,7 @@ export default function TeamPage() {
                     alt={user.fullName}
                     width={80}
                     height={80}
+                    unoptimized={true}
                     className="w-20 h-20 rounded-full mx-auto object-cover border-2 border-white mb-3"
                   />
                 ) : (

@@ -69,6 +69,7 @@ export default function ProfileDisplayStep({ user, uploadedData, onComplete, onE
                 alt="Profile"
                 width={80}
                 height={80}
+                unoptimized={true}
                 className="rounded-full object-cover border-2 border-white"
               />
             ) : (
@@ -144,6 +145,7 @@ export default function ProfileDisplayStep({ user, uploadedData, onComplete, onE
                         alt={upload.fileName}
                         width={200}
                         height={200}
+                        unoptimized={true}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                       />
                     ) : (

@@ -98,6 +98,7 @@ export default function UserProfile() {
                     alt={userProfile.fullName}
                     width={120}
                     height={120}
+                    unoptimized={true}
                     className="rounded-full object-cover border-4 border-white"
                   />
                 ) : (
@@ -168,6 +169,7 @@ export default function UserProfile() {
                             alt={upload.fileName}
                             width={200}
                             height={200}
+                            unoptimized={true}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                           />
                         ) : (
