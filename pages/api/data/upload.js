@@ -1,5 +1,6 @@
 import { db, bucket } from '../../../lib/firebase-admin';
 import formidable from 'formidable';
+import fs from 'fs';
 
 export const config = {
   api: {
@@ -89,8 +90,9 @@ export default async function handler(req, res) {
         const fileName = `data-images/${uid}/${Date.now()}-${image.originalFilename}`;
         const file = bucket.file(fileName);
         
-        // Upload file to Firebase Storage
-        const uploadPromise = file.save(image.filepath, {
+        // Read file buffer and upload to Firebase Storage
+        const fileBuffer = fs.readFileSync(image.filepath);
+        const uploadPromise = file.save(fileBuffer, {
           metadata: {
             contentType: image.mimetype,
           },
