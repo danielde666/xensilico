@@ -47,11 +47,10 @@ export default function TeamPage() {
 
   return (
     <div className="min-h-screen bg-black text-white px-6 py-12">
-      <h1 className="text-4xl font-bold text-center mb-10">Meet the Team</h1>
+      <h1 className="text-4xl font-bold text-center mb-10">AI Advisory Board</h1>
       
       {/* Core Team */}
       <div className="mb-16">
-        <h2 className="text-2xl font-semibold mb-8 text-center">Core Team</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {team.map((member, i) => (
             <div key={i} className="bg-zinc-900 p-6 rounded-lg text-center shadow-lg">
@@ -77,7 +76,7 @@ export default function TeamPage() {
       
       {users.length > 0 ? (
         <div>
-          <h2 className="text-2xl font-semibold mb-8 text-center">Community Members</h2>
+          <h2 className="text-2xl font-semibold mb-8 text-center">Members</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {users.map((user) => (
               <div 
