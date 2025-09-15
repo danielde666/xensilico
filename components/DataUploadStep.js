@@ -73,7 +73,7 @@ export default function DataUploadStep({ user, onDataUploaded, onBack }) {
         formDataToSend.append(`images`, file);
       });
       
-      const res = await fetch('/api/data/upload-local', {
+      const res = await fetch('/api/data/upload', {
         method: 'POST',
         body: formDataToSend,
       });

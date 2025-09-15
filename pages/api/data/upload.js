@@ -1,4 +1,5 @@
 import { db, bucket } from '../../../lib/firebase-admin';
+import formidable from 'formidable';
 
 export const config = {
   api: {
@@ -62,12 +63,16 @@ export default async function handler(req, res) {
       });
     }
 
-    // Handle multipart form data (original logic)
-    console.log('Parsing form data...');
-    const formData = await parseFormData(req);
-    console.log('Form data parsed:', { uid: formData.uid ? 'present' : 'missing', images: formData.images ? Array.isArray(formData.images) ? formData.images.length : 'single' : 'missing' });
+    // Handle multipart form data using formidable
+    console.log('Parsing form data with formidable...');
+    const form = formidable({
+      maxFileSize: 50 * 1024 * 1024, // 50MB
+      multiples: true, // Allow multiple files
+    });
+
+    const [fields, files] = await form.parse(req);
     
-    const { uid, images } = formData;
+    const uid = Array.isArray(fields.uid) ? fields.uid[0] : fields.uid;
     
     if (!uid) {
       return res.status(400).json({ error: 'User ID is required' });
@@ -77,17 +82,17 @@ export default async function handler(req, res) {
     const uploadedFiles = [];
 
     // Handle multiple images
-    const imageFiles = Array.isArray(images) ? images : [images];
+    const imageFiles = Array.isArray(files.images) ? files.images : [files.images];
     
     for (const image of imageFiles) {
-      if (image && image.name) {
-        const fileName = `data-images/${uid}/${Date.now()}-${image.name}`;
+      if (image && image.originalFilename) {
+        const fileName = `data-images/${uid}/${Date.now()}-${image.originalFilename}`;
         const file = bucket.file(fileName);
         
         // Upload file to Firebase Storage
-        const uploadPromise = file.save(image.data, {
+        const uploadPromise = file.save(image.filepath, {
           metadata: {
-            contentType: image.type,
+            contentType: image.mimetype,
           },
         }).then(async () => {
           // Make file publicly accessible
@@ -99,10 +104,10 @@ export default async function handler(req, res) {
           // Create document in Firestore
           const uploadDoc = {
             uid,
-            fileName: image.name,
+            fileName: image.originalFilename,
             fileUrl: publicUrl,
-            fileSize: image.data.length,
-            contentType: image.type,
+            fileSize: image.size,
+            contentType: image.mimetype,
             uploadDate: new Date().toISOString(),
             status: 'pending',
             metadata: {}
@@ -130,7 +135,7 @@ export default async function handler(req, res) {
       updatedAt: new Date().toISOString()
     });
     
-    console.log('Data uploaded:', { uid, fileCount: uploadedFiles.length });
+    console.log('Data uploaded to Firebase Storage:', { uid, fileCount: uploadedFiles.length });
     
     res.status(200).json({ 
       success: true,
@@ -147,63 +152,3 @@ export default async function handler(req, res) {
   }
 }
 
-// Helper function to parse multipart form data
-function parseFormData(req) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    
-    req.on('data', chunk => chunks.push(chunk));
-    req.on('end', () => {
-      const buffer = Buffer.concat(chunks);
-      const contentType = req.headers['content-type'];
-      
-      if (!contentType || !contentType.includes('multipart/form-data')) {
-        reject(new Error('Invalid content type'));
-        return;
-      }
-      
-      const boundary = contentType.split('boundary=')[1];
-      if (!boundary) {
-        reject(new Error('No boundary found'));
-        return;
-      }
-      
-      const parts = buffer.toString().split(`--${boundary}`);
-      const fields = {};
-      const files = [];
-      
-      for (const part of parts) {
-        if (part.includes('Content-Disposition')) {
-          const headerEnd = part.indexOf('\r\n\r\n');
-          const header = part.substring(0, headerEnd);
-          const body = part.substring(headerEnd + 4, part.length - 2);
-          
-          const nameMatch = header.match(/name="([^"]+)"/);
-          if (nameMatch) {
-            const fieldName = nameMatch[1];
-            
-            if (header.includes('filename=')) {
-              // This is a file
-              const filenameMatch = header.match(/filename="([^"]+)"/);
-              const contentTypeMatch = header.match(/Content-Type: ([^\r\n]+)/);
-              
-              if (filenameMatch) {
-                files.push({
-                  name: filenameMatch[1],
-                  type: contentTypeMatch ? contentTypeMatch[1] : 'application/octet-stream',
-                  data: Buffer.from(body)
-                });
-              }
-            } else {
-              // This is a regular field
-              fields[fieldName] = body;
-            }
-          }
-        }
-      }
-      
-      resolve({ ...fields, images: files });
-    });
-    req.on('error', reject);
-  });
-}

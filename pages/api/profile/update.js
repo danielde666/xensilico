@@ -1,20 +1,5 @@
-import { initializeApp, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-import { getStorage } from 'firebase-admin/storage';
-
-const app = initializeApp({
-  credential: cert({
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY.includes('-----BEGIN PRIVATE KEY-----') 
-      ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-      : `-----BEGIN PRIVATE KEY-----\n${process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')}\n-----END PRIVATE KEY-----`,
-  }),
-  storageBucket: 'xensilico-leads.firebasestorage.app'
-});
-
-const db = getFirestore(app);
-const bucket = getStorage().bucket();
+import { db, bucket } from '../../../lib/firebase-admin';
+import formidable from 'formidable';
 
 export const config = {
   api: {
@@ -28,9 +13,21 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Parse multipart form data
-    const formData = await parseFormData(req);
-    const { uid, fullName, company, jobTitle, hospitalsServed, pathologies, profileImage } = formData;
+    // Parse multipart form data using formidable
+    const form = formidable({
+      maxFileSize: 5 * 1024 * 1024, // 5MB
+      allowEmptyFiles: false,
+    });
+
+    const [fields, files] = await form.parse(req);
+    
+    // Extract fields with fallbacks
+    const uid = Array.isArray(fields.uid) ? fields.uid[0] : fields.uid;
+    const fullName = Array.isArray(fields.fullName) ? fields.fullName[0] : fields.fullName;
+    const company = Array.isArray(fields.company) ? fields.company[0] : fields.company;
+    const jobTitle = Array.isArray(fields.jobTitle) ? fields.jobTitle[0] : fields.jobTitle;
+    const hospitalsServed = JSON.parse(Array.isArray(fields.hospitalsServed) ? fields.hospitalsServed[0] : fields.hospitalsServed);
+    const pathologies = JSON.parse(Array.isArray(fields.pathologies) ? fields.pathologies[0] : fields.pathologies);
     
     if (!uid || !fullName || !jobTitle) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -39,14 +36,15 @@ export default async function handler(req, res) {
     let profileImageUrl = '';
     
     // Handle image upload if provided
-    if (profileImage) {
-      const fileName = `profile-images/${uid}/${Date.now()}-${profileImage.name}`;
+    if (files.profileImage && files.profileImage[0]) {
+      const image = files.profileImage[0];
+      const fileName = `profile-images/${uid}/${Date.now()}-${image.originalFilename}`;
       const file = bucket.file(fileName);
       
       // Upload file to Firebase Storage
-      await file.save(profileImage.data, {
+      await file.save(image.filepath, {
         metadata: {
-          contentType: profileImage.type,
+          contentType: image.mimetype,
         },
       });
       
@@ -62,8 +60,8 @@ export default async function handler(req, res) {
       fullName: fullName.trim(),
       company: company ? company.trim() : '',
       jobTitle: jobTitle.trim(),
-      hospitalsServed: JSON.parse(hospitalsServed),
-      pathologies: JSON.parse(pathologies),
+      hospitalsServed,
+      pathologies,
       profileImageUrl: profileImageUrl,
       updatedAt: new Date().toISOString(),
       isProfileComplete: true
@@ -71,7 +69,7 @@ export default async function handler(req, res) {
 
     await db.collection('users').doc(uid).update(profileData);
     
-    console.log('Profile updated:', { uid, fullName, jobTitle });
+    console.log('Profile updated in Firebase:', { uid, fullName, jobTitle, profileImageUrl });
     
     res.status(200).json({ 
       success: true,
@@ -86,57 +84,3 @@ export default async function handler(req, res) {
   }
 }
 
-// Helper function to parse multipart form data
-function parseFormData(req) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    const fields = {};
-    const files = {};
-    
-    req.on('data', chunk => chunks.push(chunk));
-    req.on('end', () => {
-      const buffer = Buffer.concat(chunks);
-      const boundary = req.headers['content-type'].split('boundary=')[1];
-      
-      if (!boundary) {
-        reject(new Error('No boundary found'));
-        return;
-      }
-      
-      const parts = buffer.toString().split(`--${boundary}`);
-      
-      for (const part of parts) {
-        if (part.includes('Content-Disposition')) {
-          const headerEnd = part.indexOf('\r\n\r\n');
-          const header = part.substring(0, headerEnd);
-          const body = part.substring(headerEnd + 4, part.length - 2);
-          
-          const nameMatch = header.match(/name="([^"]+)"/);
-          if (nameMatch) {
-            const fieldName = nameMatch[1];
-            
-            if (header.includes('filename=')) {
-              // This is a file
-              const filenameMatch = header.match(/filename="([^"]+)"/);
-              const contentTypeMatch = header.match(/Content-Type: ([^\r\n]+)/);
-              
-              if (filenameMatch) {
-                files[fieldName] = {
-                  name: filenameMatch[1],
-                  type: contentTypeMatch ? contentTypeMatch[1] : 'application/octet-stream',
-                  data: Buffer.from(body)
-                };
-              }
-            } else {
-              // This is a regular field
-              fields[fieldName] = body;
-            }
-          }
-        }
-      }
-      
-      resolve({ ...fields, ...files });
-    });
-    req.on('error', reject);
-  });
-}

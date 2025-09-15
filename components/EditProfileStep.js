@@ -141,7 +141,7 @@ export default function EditProfileStep({ user, onProfileComplete, onBack }) {
         formDataToSend.append('profileImage', formData.profileImage);
       }
       
-      const res = await fetch('/api/profile/update-local', {
+      const res = await fetch('/api/profile/update', {
         method: 'POST',
         body: formDataToSend,
       });
