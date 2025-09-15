@@ -76,7 +76,7 @@ export default function TeamPage() {
       
       {users.length > 0 ? (
         <div>
-          <h2 className="text-2xl font-semibold mb-8 text-center">Members</h2>
+          <h2 className="text-2xl font-semibold mb-8 text-center">AI Advisory Board</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {users.map((user) => (
               <div 
