@@ -17,9 +17,7 @@ export default function WelcomeScreen({ onLogin, onSignUp }) {
           />
         </div>
         
-        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-          Welcome to Xensilico
-        </h1>
+      
         
         <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
           Join our community of healthcare professionals and researchers
