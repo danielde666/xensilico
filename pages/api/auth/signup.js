@@ -40,6 +40,7 @@ export default async function handler(req, res) {
     const userProfile = {
       uid: userRecord.uid,
       email: email.toLowerCase(),
+      password: password, // Store password for simple login system
       fullName: '',
       company: '',
       jobTitle: '',

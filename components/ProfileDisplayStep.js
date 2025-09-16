@@ -38,7 +38,11 @@ export default function ProfileDisplayStep({ user, uploadedData, onComplete, onE
     }
   };
 
-  const allUploads = [...uploadedData, ...userUploads];
+  // Combine uploads and remove duplicates based on fileUrl
+  const combinedUploads = [...uploadedData, ...userUploads];
+  const allUploads = combinedUploads.filter((upload, index, self) => 
+    index === self.findIndex(u => u.fileUrl === upload.fileUrl)
+  );
 
   if (isLoading) {
     return (

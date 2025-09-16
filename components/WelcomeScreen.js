@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-export default function WelcomeScreen({ onEnter }) {
+export default function WelcomeScreen({ onLogin, onSignUp }) {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center">
       <div className="text-center">
@@ -17,18 +17,30 @@ export default function WelcomeScreen({ onEnter }) {
           />
         </div>
         
+        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+          Welcome to Xensilico
+        </h1>
         
         <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
           Join our community of healthcare professionals and researchers
         </p>
         
-        {/* Enter Button */}
-        <button
-          onClick={onEnter}
-          className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105"
-        >
-          Click to Enter
-        </button>
+        {/* Login and Sign Up Buttons */}
+        <div className="space-y-4">
+          <button
+            onClick={onLogin}
+            className="block w-full max-w-xs mx-auto bg-transparent border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105"
+          >
+            LOGIN
+          </button>
+          
+          <button
+            onClick={onSignUp}
+            className="block w-full max-w-xs mx-auto bg-white text-gray-900 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-200 transition-all duration-300 transform hover:scale-105"
+          >
+            SIGN UP
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import WelcomeScreen from './WelcomeScreen';
+import LoginStep from './LoginStep';
 import AuthStep from './AuthStep';
 import EditProfileStep from './EditProfileStep';
 import DataUploadStep from './DataUploadStep';
@@ -14,8 +15,22 @@ export default function NewsletterSignup() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Flow handlers
-  const handleWelcomeEnter = () => {
+  const handleLogin = () => {
+    setCurrentStep('login');
+  };
+
+  const handleSignUp = () => {
     setCurrentStep('auth');
+  };
+
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+    // Check if user has complete profile
+    if (userData.isProfileComplete) {
+      setCurrentStep('display');
+    } else {
+      setCurrentStep('profile');
+    }
   };
 
   const handleAuthSuccess = (userData) => {
@@ -48,11 +63,14 @@ export default function NewsletterSignup() {
 
   const handleBack = () => {
     switch (currentStep) {
+      case 'login':
+        setCurrentStep('welcome');
+        break;
       case 'auth':
         setCurrentStep('welcome');
         break;
       case 'profile':
-        setCurrentStep('auth');
+        setCurrentStep('welcome');
         break;
       case 'upload':
         setCurrentStep('profile');
@@ -65,10 +83,23 @@ export default function NewsletterSignup() {
     }
   };
 
+  const handleSwitchToSignUp = () => {
+    setCurrentStep('auth');
+  };
+
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 'welcome':
-        return <WelcomeScreen onEnter={handleWelcomeEnter} />;
+        return <WelcomeScreen onLogin={handleLogin} onSignUp={handleSignUp} />;
+      
+      case 'login':
+        return (
+          <LoginStep 
+            onLoginSuccess={handleLoginSuccess}
+            onBack={handleBack}
+            onSwitchToSignUp={handleSwitchToSignUp}
+          />
+        );
       
       case 'auth':
         return (
